@@ -20,6 +20,29 @@ TURN_QUEUE_MAX = 2       # curvas "guardadas" por jogador (input buffer)
 DISSOLVE_DELAY = 0.5     # tempo até o rastro do jogador morto começar a sumir
 DISSOLVE_SEC = 0.9
 
+# Paletas por jogador: (nome exibido no menu, cor)
+PALETTES = {
+    1: [("CIANO", "#00FFFF"), ("AZUL", "#0088FF"), ("TURQUESA", "#00FFDD"), ("GELO", "#C8F0FF")],
+    2: [("VERMELHO", "#FF0055"), ("CARMIM", "#FF2020"), ("ROSA", "#FF44AA"), ("MAGENTA", "#FF00FF")],
+    3: [("VERDE", "#00FF66"), ("LIMA", "#88FF00"), ("MENTA", "#00FFBB"), ("JADE", "#00CC77")],
+    4: [("LARANJA", "#FFAA00"), ("OURO", "#FFDD00"), ("FOGO", "#FF6600"), ("VIOLETA", "#AA55FF")],
+}
+
+# Mapas: (nome, obstáculos (x1, y1, x2, y2) em frações da área interna da arena).
+# Mantêm livre a saída dos spawns: linha do meio (P1/P2) e coluna do meio (P3/P4).
+MAPS = [
+    ("CRUZ", [(0.435, 0.48, 0.565, 0.52), (0.489, 0.38, 0.511, 0.62)]),
+    ("PILARES", [(x, y, x + 0.05, y + 0.09) for x in (0.2, 0.75) for y in (0.2, 0.71)]
+                + [(0.475, 0.455, 0.525, 0.545)]),
+    ("CORREDORES", [(0.15, 0.28, 0.44, 0.31), (0.56, 0.28, 0.85, 0.31),
+                    (0.15, 0.69, 0.44, 0.72), (0.56, 0.69, 0.85, 0.72)]),
+    ("FORTALEZA", [(0.35, 0.30, 0.46, 0.32), (0.54, 0.30, 0.65, 0.32),      # muro de cima
+                   (0.35, 0.68, 0.46, 0.70), (0.54, 0.68, 0.65, 0.70),      # muro de baixo
+                   (0.35, 0.30, 0.362, 0.43), (0.35, 0.57, 0.362, 0.70),    # muro esquerdo
+                   (0.638, 0.30, 0.65, 0.43), (0.638, 0.57, 0.65, 0.70)]),  # muro direito
+]
+RANDOM_MAP = len(MAPS)   # índice extra no seletor = sorteia um mapa a cada rodada
+
 KEYMAP = {
     1: {"w": (0, -1), "s": (0, 1), "a": (-1, 0), "d": (1, 0)},
     2: {"up": (0, -1), "down": (0, 1), "left": (-1, 0), "right": (1, 0)},

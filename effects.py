@@ -5,6 +5,45 @@ import random
 from config import BG_COLOR, blend
 
 
+def _sym(half):
+    """Espelha meio contorno (do nariz até a cauda, lado y<0) para formar o polígono inteiro."""
+    return half + [(x, -y) for x, y in reversed(half) if y]
+
+
+# Modelos de moto vistos de cima: (nome, carenagem, cockpit), apontando para +x com a ponta do rastro na origem
+BIKES = [
+    ("CLASSICA", _sym([(3, 0), (0, -3), (-5, -4), (-17, -4), (-21, -2), (-21, 0)]),
+                 _sym([(-3, 0), (-6, -2), (-12, -2), (-12, 0)])),
+    ("INTERCEPTOR", _sym([(6, 0), (-4, -2.5), (-11, -6), (-20, -7), (-16, -3), (-21, 0)]),
+                    _sym([(-1, 0), (-5, -1.5), (-11, -1.5), (-11, 0)])),
+    ("TITAN", _sym([(2, 0), (1, -4), (-3, -6), (-19, -6), (-23, -4), (-23, 0)]),
+              _sym([(-4, 0), (-6, -3), (-14, -3), (-16, 0)])),
+]
+
+
+def bike_points(shape, x, y, d, scale=1.0):
+    """Gira o contorno para a direção d=(dx, dy) e posiciona em (x, y)."""
+    dx, dy = d
+    pts = []
+    for sx, sy in shape:
+        sx, sy = sx * scale, sy * scale
+        pts += [x + sx * dx - sy * dy, y + sx * dy + sy * dx]
+    return pts
+
+
+def draw_bike(cv, x, y, d, color, model=0, scale=1.0, tags=()):
+    _, body, canopy = BIKES[model]
+    b = cv.create_polygon(bike_points(body, x, y, d, scale), fill=blend(color, BG_COLOR, 0.6), outline=color,
+                          width=max(1, round(scale * 1.5)), joinstyle="round", tags=tags)
+    c = cv.create_polygon(bike_points(canopy, x, y, d, scale), fill=blend(color, "#FFFFFF", 0.65), outline="", tags=tags)
+    return [b, c]
+
+
+def move_bike(cv, items, model, x, y, d, scale=1.0):
+    for it, shape in zip(items, BIKES[model][1:]):
+        cv.coords(it, *bike_points(shape, x, y, d, scale))
+
+
 class Effects:
     def __init__(self, canvas):
         self.cv = canvas
